@@ -1,0 +1,205 @@
+---
+import Icon from '../components/Icon.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import DemoShowcase from '../components/DemoShowcase.astro';
+import { categories, asset, base, citation } from '../content';
+const diagrams = [
+  [
+    'perception-cognition-action',
+    'A closed feedback loop',
+    'Observations inform decisions. Actions return actual outcomes, giving the next decision a grounded starting point.',
+  ],
+  [
+    'task-skill-capabilities',
+    'Goals with the right capabilities',
+    'Tasks retain goals and context. Skills declare operations, observable states, instructions and dependencies.',
+  ],
+  [
+    'multi-agent-communication',
+    'Specialists working together',
+    'Assistant and Writer exchange requests and feedback through Gateway while retaining their own context and responsibilities.',
+  ],
+];
+---
+
+<BaseLayout
+  title="MobileHarness — Embodied Agents on Your Phone"
+  description="A smartphone-hosted framework connecting perception, agent reasoning, and action."
+>
+  <SiteHeader />
+  <main id="main">
+    <section class="hero container">
+      <p class="eyebrow">Perception · Cognition · Action</p>
+      <h1>
+        Mobile<span>Harness</span>
+      </h1>
+      <!-- Alternative slogan: A Mobile Harness for Embodied Agents -->
+      <p class="hero-subtitle">
+        A Smartphone-Driven Agent Harness for Robotics
+      </p>
+      <div class="project-meta">
+        <span class="maintainer">
+          <Icon name="user" /> Project maintainer:{' '}
+          <a href="https://github.com/devilyouwei">devilyouwei ↗</a>
+        </span>
+        <a class="cite-link" href="#citation">
+          <Icon name="quote" /> Cite this project
+        </a>
+      </div>
+    </section>
+    <DemoShowcase />
+    <section
+      class="abstract container section reveal"
+      aria-labelledby="abstract-title"
+    >
+      <p class="eyebrow">The idea</p>
+      <h2 id="abstract-title">
+        Intelligence, grounded
+        <br />
+        in your everyday device.
+      </h2>
+      <div>
+        <p class="lead">
+          Your phone already sees, hears, speaks, and connects. MobileHarness
+          brings those capabilities into an agent’s feedback loop.
+        </p>
+        <p>
+          MobileHarness is a smartphone-hosted framework that connects
+          perception, agent reasoning, and action in a native iPhone
+          application. Specialized agents interpret observations and user
+          intent, coordinate through Gateway, and invoke supported software and
+          device operations. Actual outcomes return as feedback to guide
+          subsequent decisions.
+        </p>
+        <p>
+          Tasks preserve goals across turns, while Skills expose the
+          capabilities needed to pursue them. The framework combines voice
+          interaction, visual sensing, content creation and supported NexArm
+          hardware, with explicit configuration and execution boundaries.
+        </p>
+        <p class="caption">
+          Project abstract · This site presents existing examples, not a
+          quantitative evaluation or a claim of general robot autonomy.
+        </p>
+      </div>
+    </section>
+    <section id="demos" class="container section">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">Six ways to explore</p>
+          <h2>
+            One framework.
+            <br />
+            Many possibilities.
+          </h2>
+        </div>
+        <p>
+          From conversations and creative work
+          <br />
+          to actions in the physical world.
+        </p>
+      </div>
+      <div class="category-grid">
+        {categories.map((category) => (
+          <a
+            class="category-card reveal"
+            href={`${base}/demos/${category.slug}/`}
+          >
+            <div class="category-image">
+              <img
+                src={asset(`${category.media[0].id}.webp`)}
+                width="480"
+                height="640"
+                loading="lazy"
+                alt={category.media[0].description}
+              />
+            </div>
+            <div class="category-copy">
+              <span class="eyebrow">{category.label} / Explore</span>
+              <h3>
+                {category.title} <span>↗</span>
+              </h3>
+              <p>{category.subtitle}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+    <section id="design" class="container section">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">System design</p>
+          <h2>Built around feedback.</h2>
+        </div>
+        <a
+          class="text-link"
+          href="https://github.com/devilyouwei/MobileHarness/tree/main/MobileHarness"
+        >
+          Technical design ↗
+        </a>
+      </div>
+      <div class="design-list">
+        {diagrams.map(([id, title, description], i) => (
+          <article class="design-row reveal">
+            <div>
+              <span class="eyebrow">0{i + 1} / Principle</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+              {i === 0 && (
+                <p class="caption">
+                  Conceptual modalities are illustrative, not a claim that every
+                  sensor integration is implemented.
+                </p>
+              )}
+            </div>
+            <figure>
+              <img src={asset(`${id}.svg`)} loading="lazy" alt={description} />
+              <figcaption>{title}</figcaption>
+            </figure>
+          </article>
+        ))}
+      </div>
+    </section>
+    <section id="citation" class="container section citation-section reveal">
+      <div>
+        <p class="eyebrow">Build on the idea</p>
+        <h2>Cite MobileHarness.</h2>
+        <p>
+          Software project citation. Formal paper metadata will be added when
+          available.
+        </p>
+        <a
+          class="text-link"
+          href="https://github.com/devilyouwei/MobileHarness"
+        >
+          Explore source & documentation ↗
+        </a>
+      </div>
+      <div class="citation-box">
+        <div class="citation-toolbar">
+          <span>BibTeX · Software</span>
+          <button id="copy-citation">Copy</button>
+          <span id="copy-status" role="status"></span>
+        </div>
+        <pre><code id="citation-text">{citation}</code></pre>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+<script>
+  document
+    .querySelector('#copy-citation')
+    ?.addEventListener('click', async () => {
+      const text = document.querySelector('#citation-text')!.textContent!;
+      const status = document.querySelector('#copy-status')!;
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = 'Copied';
+      } catch {
+        status.textContent = 'Select and copy the text below.';
+      }
+    });
+</script>

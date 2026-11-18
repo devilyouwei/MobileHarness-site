@@ -1,0 +1,52 @@
+<dialog id="media-dialog" aria-labelledby="dialog-title">
+  <div class="dialog-top">
+    <h2 id="dialog-title"></h2>
+    <button id="close-media" aria-label="Close video">
+      ✕
+    </button>
+  </div>
+  <video controls playsinline preload="none"></video>
+  <p class="caption">
+    Converted from the project’s existing GIF. Original sequence and timing; no
+    audio track.
+  </p>
+</dialog>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#media-dialog')!;
+  const player = dialog.querySelector('video')!;
+  document.addEventListener(
+    'play',
+    (event) => {
+      if (event.target instanceof HTMLVideoElement)
+        document.querySelectorAll('video').forEach((v) => {
+          if (v !== event.target) v.pause();
+        });
+    },
+    true,
+  );
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-video]')
+    .forEach((button) =>
+      button.addEventListener('click', () => {
+        document.querySelectorAll('video').forEach((v) => v.pause());
+        dialog.querySelector('#dialog-title')!.textContent =
+          button.dataset.title || 'Demo';
+        player.src = button.dataset.video!;
+        dialog.showModal();
+        document.dispatchEvent(new Event('media-open'));
+        player.play().catch(() => {});
+      }),
+    );
+  document
+    .querySelector('#close-media')!
+    .addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => {
+    player.pause();
+    player.removeAttribute('src');
+    player.load();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden)
+      document.querySelectorAll('video').forEach((v) => v.pause());
+  });
+</script>

@@ -1,0 +1,39 @@
+---
+import { asset, type Media } from '../content';
+const { media } = Astro.props as { media: Media };
+---
+
+<article class="media-card reveal">
+  {media.kind === 'video' ? (
+    <button
+      class="media-open"
+      data-video={asset(`${media.id}.mp4`)}
+      data-title={media.title}
+      aria-label={`Play ${media.title}`}
+    >
+      <img
+        src={asset(`${media.id}.webp`)}
+        alt={media.description}
+        loading="lazy"
+        width="480"
+        height="640"
+      />
+      <span class="play">▶</span>
+    </button>
+  ) : (
+    <img
+      src={asset(`${media.id}.webp`)}
+      alt={media.description}
+      loading="lazy"
+      width="480"
+      height="640"
+    />
+  )}
+  <div class="media-copy">
+    <span class="eyebrow">
+      {media.kind === 'video' ? 'Recorded animation' : 'App screenshot'}
+    </span>
+    <h3>{media.title}</h3>
+    <p>{media.description}</p>
+  </div>
+</article>

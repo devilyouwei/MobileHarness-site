@@ -1,0 +1,142 @@
+---
+import { featured, asset } from '../content';
+---
+
+<section class="showcase" aria-label="Featured demo videos" tabindex="0">
+  <div class="swiper">
+    <div class="swiper-wrapper">
+      {featured.map((media) => (
+        <article class="swiper-slide">
+          <div class="stage">
+            <img
+              src={asset(`${media.id}.webp`)}
+              alt={media.description}
+              width="480"
+              height="640"
+              loading={media === featured[1] ? 'eager' : 'lazy'}
+            />
+            <video
+              muted
+              loop
+              playsinline
+              preload="none"
+              poster={asset(`${media.id}.webp`)}
+              data-src={asset(`${media.id}.mp4`)}
+              aria-label={`${media.title} silent preview`}
+            ></video>
+            <button
+              class="stage-play"
+              data-video={asset(`${media.id}.mp4`)}
+              data-title={media.title}
+              aria-label={`Watch ${media.title}`}
+            >
+              Watch demo ↗
+            </button>
+          </div>
+          <h3>{media.title}</h3>
+        </article>
+      ))}
+    </div>
+  </div>
+  <div class="showcase-controls">
+    <button class="previous" aria-label="Previous demo">
+      ←
+    </button>
+    <span>Explore the possibilities</span>
+    <button class="next" aria-label="Next demo">
+      →
+    </button>
+    <button class="preview-toggle" aria-pressed="false">
+      Pause preview
+    </button>
+  </div>
+</section>
+<script>
+  import Swiper from 'swiper';
+  import { EffectCoverflow, Navigation, A11y } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/effect-coverflow';
+  const root = document.querySelector<HTMLElement>('.showcase')!;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const saveData = (
+    navigator as Navigator & { connection?: { saveData?: boolean } }
+  ).connection?.saveData;
+  let visible = false,
+    paused = false;
+  const update = () => {
+    root.querySelectorAll('video').forEach((video) => {
+      const active = video
+        .closest('.swiper-slide')
+        ?.classList.contains('swiper-slide-active');
+      if (
+        active &&
+        visible &&
+        !paused &&
+        !reduced.matches &&
+        !saveData &&
+        !document.hidden &&
+        !document.querySelector('dialog[open]')
+      ) {
+        if (!video.src) video.src = video.dataset.src!;
+        video.play().catch(() => {
+          video.style.opacity = '0';
+        });
+      } else {
+        video.pause();
+        if (video.src) {
+          video.removeAttribute('src');
+          video.load();
+        }
+      }
+    });
+  };
+  const swiper = new Swiper(root.querySelector<HTMLElement>('.swiper')!, {
+    modules: [EffectCoverflow, Navigation, A11y],
+    effect: reduced.matches ? 'slide' : 'coverflow',
+    centeredSlides: true,
+    initialSlide: 1,
+    slidesPerView: 1.3,
+    spaceBetween: 24,
+    speed: reduced.matches ? 0 : 650,
+    coverflowEffect: {
+      rotate: 25,
+      depth: 150,
+      stretch: 0,
+      modifier: 1,
+      slideShadows: false,
+    },
+    breakpoints: { 640: { slidesPerView: 2.2 }, 1024: { slidesPerView: 2.8 } },
+    navigation: {
+      prevEl: root.querySelector<HTMLElement>('.previous'),
+      nextEl: root.querySelector<HTMLElement>('.next'),
+    },
+    on: { slideChangeTransitionEnd: update },
+  });
+  new IntersectionObserver(
+    (entries) => {
+      visible = entries[0].isIntersecting;
+      update();
+    },
+    { threshold: 0.25 },
+  ).observe(root);
+  const toggle = root.querySelector<HTMLButtonElement>('.preview-toggle')!;
+  if (reduced.matches || saveData) {
+    paused = true;
+    toggle.textContent = 'Preview off';
+    toggle.disabled = true;
+  }
+  toggle.addEventListener('click', () => {
+    paused = !paused;
+    toggle.textContent = paused ? 'Resume preview' : 'Pause preview';
+    toggle.setAttribute('aria-pressed', String(paused));
+    update();
+  });
+  root.addEventListener('keydown', (e) => {
+    if (e.target !== root) return;
+    if (e.key === 'ArrowRight') swiper.slideNext();
+    if (e.key === 'ArrowLeft') swiper.slidePrev();
+  });
+  document.addEventListener('visibilitychange', update);
+  document.addEventListener('media-open', update);
+  reduced.addEventListener('change', update);
+</script>

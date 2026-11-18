@@ -1,0 +1,67 @@
+---
+import Icon from './Icon.astro';
+import { base, asset } from '../content';
+---
+
+<header class="site-header container">
+  <a class="brand" href={`${base}/`}>
+    <img src={asset('mobileharness-eyes.png')} width="32" height="24" alt="" />
+    MobileHarness
+  </a>
+  <nav aria-label="Main navigation">
+    <a href={`${base}/#demos`}>Demos</a>
+    <a href={`${base}/#design`}>Design</a>
+    <a class="code-link" href="https://github.com/devilyouwei/MobileHarness">
+      <Icon name="github" /> Code ↗
+    </a>
+  </nav>
+  <button
+    id="theme-toggle"
+    class="theme-toggle"
+    type="button"
+    aria-label="Toggle light and dark theme"
+    title="Toggle light and dark theme"
+  >
+    <span class="theme-sun">
+      <Icon name="sun" />
+    </span>
+    <span class="theme-moon">
+      <Icon name="moon" />
+    </span>
+  </button>
+</header>
+<script>
+  const button = document.querySelector<HTMLButtonElement>('#theme-toggle')!;
+  let manual = false;
+  try {
+    manual = ['light', 'dark'].includes(localStorage.getItem('theme') || '');
+  } catch {}
+  const sync = () => {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    const label = `Switch to ${dark ? 'light' : 'dark'} theme`;
+    button.setAttribute('aria-label', label);
+    button.title = label;
+  };
+  button.addEventListener('click', () => {
+    const next =
+      document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    manual = true;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {}
+    sync();
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener(
+    'change',
+    (event) => {
+      if (!manual) {
+        document.documentElement.dataset.theme = event.matches
+          ? 'dark'
+          : 'light';
+        sync();
+      }
+    },
+  );
+  sync();
+</script>
