@@ -66,3 +66,7 @@ Removed the hero action row and its unused styles. Browser verified maintainer a
 ## Hero typography
 
 Reduced homepage title and subtitle sizing and italicized the homepage subtitle. Prettier and production build passed. Category subtitle styling remains separate.
+
+## Eyes favicon — 2026-11-19
+
+Generated transparent 64×64 PNG and 16/32/48/64px ICO from the existing eyes PNG, preserving aspect ratio. Verified transparent corners. Shared layout uses project-base-aware icon links; removed the old SVG. Formatting and production build passed. Browser favicon caching and live publication have not been verified for this change.

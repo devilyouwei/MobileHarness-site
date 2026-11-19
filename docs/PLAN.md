@@ -52,3 +52,7 @@ Remove the duplicate hero action row. Render maintainer and Citation as a single
 ## Hero typography refinement
 
 Reduce homepage heading and subtitle sizes across breakpoints, and italicize the homepage subtitle. Scope subtitle styling to the hero so category-page typography remains independently readable. Keep existing spacing and layout.
+
+## Eyes favicon
+
+Replace the generic letter favicon with the existing transparent eyes emblem. Fit it proportionally onto a transparent square, generate a 64px PNG and a multi-size ICO, update the shared layout using base-aware URLs, and remove the obsolete SVG. Preserve the original logo asset. Verify output dimensions/transparency and build.
